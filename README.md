@@ -1,73 +1,111 @@
-# 🔹 Desafio Técnico Júnior #1 – Cadastro e Consulta de Abastecimentos
+# Cadastro e Consulta de Abastecimentos
 
-## 🛠 Objetivo
+Solução do desafio técnico para cadastro e consulta de abastecimentos em posto de combustível. A implementação foi feita como API REST, uma das opções previstas no enunciado original.
 
-Desenvolver uma aplicação simples em **Java** para cadastro e consulta de abastecimentos em um posto de combustível, com armazenamento em banco de dados e exibição dos dados via **Java Swing** ou **API REST**.
+## Tecnologias
 
----
+- Java 17
+- Spring Boot 4.1.1
+- Maven
+- Spring Web
+- Spring Data JPA
+- H2 Database
 
-## 📌 Funcionalidades Implementadas
+## Como executar
 
-✅ Operaçoes basicas (Criar, Listar, Alterar, Deletar) de **Tipos de Combustível** 
-- Nome - Texto
-- Preço por litro
+É necessário ter Java 17 e Maven instalados.
 
-✅ Operaçoes basicas (Criar, Listar, Alterar, Deletar) de **Bombas de Combustível** (relacionadas a um tipo de combustível)
-- Nome da bomba
-- Combustivel que abastece
+```bash
+mvn spring-boot:run
+```
 
-✅ Operaçoes basicas (Criar, Listar, Alterar, Deletar)  de **Abastecimentos** (com data, volume abastecido e valor total)
-- Bomba que foi realizado o abastecimento
-- Data do abastecimento
-- Quantidade em valores
-- Litragem
-  
-✅ **Consulta** de todos os dados cadastrados (via Java Swing ou API)  
-✅ Persistência dos dados (ao menos em tempo de execução)  
+A aplicação inicia em:
 
----
+```
+http://localhost:8080
+```
 
-## ✅ Requisitos Atendidos
+O banco H2 é armazenado em `./data/posto`, então os dados permanecem salvos após reiniciar a aplicação. A pasta `data` não é versionada.
 
-- Projeto Java com estrutura organizada (usando Maven ou Gradle)
-- Relacionamentos entre entidades corretamente implementados
-- Interface gráfica Java Swing **ou** API HTTP para cadastro e consulta
-- Código comentado e organizado
+## Endpoints
 
----
+Os três recursos possuem operações de criação, consulta, alteração e exclusão.
 
-## 🌟 Diferenciais Implementados
+| Recurso | Endpoint |
+| --- | --- |
+| Tipos de combustível | `/tipos-combustivel` |
+| Bombas | `/bombas` |
+| Abastecimentos | `/abastecimentos` |
 
-- API RESTful simples com rotas `GET`, `POST`, `PUT`
-- Boas práticas de organização de código (DAO, camada de serviço, etc.)
-- Persistencia dos dados (em caso de restart da aplicação manter os dados)
-- 
----
+Operações disponíveis:
 
-## 📬 Como entregar o desafio
+- `GET /recurso`
+- `GET /recurso/{id}`
+- `POST /recurso`
+- `PUT /recurso/{id}`
+- `DELETE /recurso/{id}`
 
-1. **Faça um fork** deste repositório.
-2. Implemente a solução no seu fork.
-3. Faça commits organizados com mensagens claras.
-4. Após finalizar:
-   - Envie o link do **repositório forkado** com a sua solução.
-   - Certifique-se de que o projeto roda sem erros e que o README está atualizado.
+### Tipo de combustível
 
----
-## 🔍 O que será avaliado
+```json
+{
+  "nome": "Gasolina Comum",
+  "precoLitro": 6.19
+}
+```
 
-- Sua **comunicação**, especialmente ao surgir dúvidas ou obstáculos durante o desenvolvimento.
-- **O processo de desenvolvimento** como um todo, e não apenas o resultado final.
-- A clareza e organização dos **commits** realizados.
-- Sua capacidade de **estruturar a solução em etapas**, mesmo que nem todos os requisitos sejam concluídos.
+### Bomba
 
----
+A bomba deve apontar para um tipo de combustível já cadastrado.
 
-## 💡 Dicas para se sair bem
+```json
+{
+  "nome": "Bomba 1",
+  "tipoCombustivel": {
+    "id": 1
+  }
+}
+```
 
-- Divida o desafio em **pequenas partes** e implemente **com calma**, focando em cada funcionalidade por vez.
-- Use **commits claros e objetivos**, indicando exatamente o que foi alterado ou implementado.
-- Em caso de dúvida, **comunique-se** — mostrar que você sabe buscar soluções é um ponto positivo.
-- Mesmo que não finalize 100% dos requisitos, **a qualidade do seu processo será levada em conta**.
+### Abastecimento
 
----
+O abastecimento deve apontar para uma bomba já cadastrada.
+
+```json
+{
+  "bomba": {
+    "id": 1
+  },
+  "data": "2026-09-26",
+  "valorTotal": 100.00,
+  "litragem": 15.898
+}
+```
+
+## Estrutura
+
+O projeto está separado em quatro pacotes principais:
+
+- `model`, entidades persistidas pelo JPA
+- `repository`, acesso aos dados com Spring Data
+- `service`, regras de cadastro e relacionamentos
+- `controller`, endpoints HTTP da API
+
+Os relacionamentos implementados são:
+
+- uma bomba pertence a um tipo de combustível
+- um abastecimento pertence a uma bomba
+
+## Testes
+
+Os testes automatizados usam H2 em memória, sem alterar o banco utilizado ao executar a aplicação normalmente.
+
+Para executar:
+
+```bash
+mvn test
+```
+
+## Uso do código
+
+© 2026 Arthur Benfica Graff. Este projeto foi desenvolvido exclusivamente para fins de avaliação técnica. Não é autorizada a utilização, reprodução ou exploração comercial deste código sem autorização expressa do autor.
